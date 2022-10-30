@@ -1,3 +1,27 @@
+<?php
+$form = [
+    'name' => ''
+];
+$error = [];
+
+function h($value){
+    return htmlspecialchars($value,ENT_QUOTES);
+}
+/*フォームの内容をチェック*/
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $form['name'] = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_STRING);
+    if ($form['name'] === '') {
+        $error['name'] = 'blank';
+    }
+
+    $form['email'] = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
+
+    if ($form['email'] === '') {
+        $error['email'] = 'blank';
+    }
+}
+
+?>
 <!DOCTYPE html>
 <html lang="ja">
 
@@ -22,13 +46,17 @@
             <dl>
                 <dt>ニックネーム<span class="required">必須</span></dt>
                 <dd>
-                    <input type="text" name="name" size="35" maxlength="255" value=""/>
-                    <p class="error">* ニックネームを入力してください</p>
+                    <input type="text" name="name" size="35" maxlength="255" value="<?php echo h($form['name']);?>"/>
+                    <?php if (isset($error['name']) && $error['name'] === 'blank'): ?>
+                      <p class="error">* ニックネームを入力してください</p>
+                    <?php endif;?>
                 </dd>
                 <dt>メールアドレス<span class="required">必須</span></dt>
                 <dd>
-                    <input type="text" name="email" size="35" maxlength="255" value=""/>
-                    <p class="error">* メールアドレスを入力してください</p>
+                    <input type="text" name="email" size="35" maxlength="255" value="<?php echo h($form['email']); ?>
+                    <?php if ($error['email'] === 'blank'): ?>
+                      <p class="error">* メールアドレスを入力してください</p>
+                    <?php endif; ?>
                     <p class="error">* 指定されたメールアドレスはすでに登録されています</p>
                 <dt>パスワード<span class="required">必須</span></dt>
                 <dd>

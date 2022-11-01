@@ -1,3 +1,38 @@
+<?php
+session_start();
+require('../library.php');
+
+
+if (isset($_SESSION['form'])) {
+	$form = $_SESSION['form'];
+} else {
+	header('Location: index.php');
+	exit();
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+	$db = new mysqli('localhost','root','root','min_bbs');
+
+	if (!$db) {
+		die($db->error);
+	}
+
+	$stmt = $db->prepare('insert into members (name, email, password, picture) VALUES (?,?,?,?)');
+
+	if (!$stmt) {
+		die($db->error);
+	}
+
+	$stmt->bind_param('ssss',$form['name'],$form['email'],$form['password'],$form['image']);
+	$success = $stmt->execute();
+
+	if (!$success) {
+		die($db->error);
+	}
+
+}
+
+?>
 <!DOCTYPE html>
 <html lang="ja">
 
@@ -21,16 +56,16 @@
 			<form action="" method="post">
 				<dl>
 					<dt>ニックネーム</dt>
-					<dd>○○</dd>
+					<dd><?php echo $form['name']; ?></dd>
 					<dt>メールアドレス</dt>
-					<dd>info@example.com</dd>
+					<dd><?php echo h($form['email']);?></dd>
 					<dt>パスワード</dt>
 					<dd>
 						【表示されません】
 					</dd>
 					<dt>写真など</dt>
 					<dd>
-							<img src="../member_picture/" width="100" alt="" />
+							<img src="../member_picture/<?php echo h($form['image']);?>" width="100" alt="" />
 					</dd>
 				</dl>
 				<div><a href="index.php?action=rewrite">&laquo;&nbsp;書き直す</a> | <input type="submit" value="登録する" /></div>

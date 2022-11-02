@@ -11,11 +11,7 @@ if (isset($_SESSION['form'])) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-	$db = new mysqli('localhost','root','root','min_bbs');
-
-	if (!$db) {
-		die($db->error);
-	}
+	$db = dbconnect();
 
 	$stmt = $db->prepare('insert into members (name, email, password, picture) VALUES (?,?,?,?)');
 
@@ -23,12 +19,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		die($db->error);
 	}
 
-	$stmt->bind_param('ssss',$form['name'],$form['email'],$form['password'],$form['image']);
+	$password = password_hash($form['password'], PASSWORD_DEFAULT);
+	$stmt->bind_param('ssss',$form['name'],$form['email'],$password,$form['image']);
 	$success = $stmt->execute();
 
 	if (!$success) {
 		die($db->error);
 	}
+
+	unset($_SESSION['form']);
+	header('Location:thanks.php');
 
 }
 

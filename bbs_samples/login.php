@@ -29,7 +29,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->bind_result($id, $name, $hash);
     $stmt->fetch();
 
+    //ログイン判定
     if (password_verify($password, $hash)) {
+        //ログイン成功
         session_regenerate_id();
         $_SESSION['id'] = $id;
         $_SESSION['name'] = $name;

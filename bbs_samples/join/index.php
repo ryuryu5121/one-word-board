@@ -52,31 +52,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error['password'] = 'length';
     }
 
-    // var_dump($_FILES);
-    // $image = $_FILES['image'];
-    // if ($image['name'] !== '' && $image['error'] === 0) {
-    //     $type = mime_content_type($image['tmp_name']);
-    //     if ($type !== 'image/png'  && $type !== 'image/jpeg') {
-    //         $error['image'] = 'type';
-    //     }
-    // } else {
-    //     echo ("error");
-    // }
+    var_dump($_FILES);
+    $image = $_FILES['image'];
+    if ($image['name'] !== '' && $image['error'] === 0) {
+        $type = mime_content_type($image['tmp_name']);
+        if ($type !== 'image/png'  && $type !== 'image/jpeg') {
+            $error['image'] = 'type';
+        }
+    } else {
+        echo ("error");
+    }
 
     if (empty($error)) {
         $_SESSION['form'] = $form;
 
-    //     //画像のアップロード
-    //     if ($image['name'] !== ''){
-    //     $filename = date('YmdHis'). '_'.$image['name'];
-    //     if (!move_uploaded_file($image['tmp_name'], '../member_picture/'.$filename)) {
-    //         die('ファイルのアップロードに失敗しました');
-    //     }
+        //画像のアップロード
+        if ($image['name'] !== ''){
+        $filename = date('YmdHis'). '_'.$image['name'];
+        if (!move_uploaded_file($image['tmp_name'], '../member_picture/'.$filename)) {
+            die('ファイルのアップロードに失敗しました');
+        }
 
-    //     $_SESSION['form']['image'] = $filename;
-    // }    else {
-    //     $_SESSION['form']['image'] = '';
-    // }        
+        $_SESSION['form']['image'] = $filename;
+    }    else {
+        $_SESSION['form']['image'] = '';
+    }        
 
         header('Location: check.php');
         exit();

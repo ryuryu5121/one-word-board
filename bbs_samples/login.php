@@ -14,14 +14,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error['login'] = 'blank';
     } else {
         $db = dbconnect();
-        $stmt = $db-> prepare('select id, name, password from members where email = ? limit 1');
+        $stmt = $db->prepare('select id, name, password from members where email = ? limit 1');
         if (!$stmt) {
             die($db->error);
         }
     }
 
     $stmt->bind_param('s', $email);
-    $success = $db->execute();
+    $success = $stmt->execute();
     if (!$success) {
         die($db->error);
     }
@@ -77,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </dd>
                 <dt>パスワード</dt>
                 <dd>
-                    <input type="password" name="password" size="35" maxlength="255" value=""/>
+                    <input type="password" name="password" size="35" maxlength="255" value="<?php echo h($password)?>"/>
                 </dd>
             </dl>
             <div>

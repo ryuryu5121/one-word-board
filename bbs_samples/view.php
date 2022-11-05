@@ -10,7 +10,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['name'])) {
     exit();
 }
 
-$id = filter_input(INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INPUT);
+$id = filter_input(INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT);
 if (!$id) {
     header('Location : index.php');
     exit();
@@ -40,7 +40,7 @@ $db = dbconnect();
     </div>
     <div id="content">
         <p>&laquo;<a href="index.php">一覧にもどる</a></p>
-        <?php $stmt = $db->prepare('select p.id p.member_id, p.message, p.created, m.name, m.picture from posts p, members m where p.id = ? and m.id = p.member_id by id desc');
+        <?php $stmt = $db->prepare('select p.id, p.members_id, p.message, p.created, m.name, m.picture from posts p, members m where p.id = ? and m.id = p.members_id order by id desc');
         if (!$stmt) {
             die($db->error);
         }

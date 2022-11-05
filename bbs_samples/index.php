@@ -15,7 +15,7 @@ $db = dbconnect();
 //メッセージの投稿
 if (($_SERVER['REQUEST_METHOD'] === 'POST')) {
     $message = filter_input(INPUT_POST, 'message', FILTER_SANITIZE_STRING);
-    $stmt = $db->prepare('insert into posts (message, member_id) values (?,?)');
+    $stmt = $db->prepare('insert into posts (message, members_id) values (?,?)');
     if (!$stmt) {
         die($db->error);
     }
@@ -55,6 +55,7 @@ if (($_SERVER['REQUEST_METHOD'] === 'POST')) {
                 <dt><?php echo h($name); ?>さん、メッセージをどうぞ</dt>
                 <dd>
                     <textarea name="message" cols="50" rows="5"></textarea>
+                    <input type = "hidden" name = "reply_post_id" value =""/>
                 </dd>
             </dl>
             <div>
@@ -64,7 +65,7 @@ if (($_SERVER['REQUEST_METHOD'] === 'POST')) {
             </div>
         </form>
 
-        <?php $stmt = $db->prepare('select p.id p.member_id, p.message, p.created, m.name, m.picture from posts p, members m where m.id = p.member_id by id desc');
+        <?php $stmt = $db->prepare('select p.id, p.members_id, p.message, p.created, m.name, m.picture from posts p, members m where m.id = p.members_id order by id desc');
         if (!$stmt) {
             die($db->error);
         }
@@ -76,14 +77,14 @@ if (($_SERVER['REQUEST_METHOD'] === 'POST')) {
         $stmt->bind_result($id, $member_id, $message, $created, $name, $picture);
         while($stmt->fetch()):
         ?>
-        <div class="msg">
-            <?php if ($picture): ?>
-            <img src="member_picture/<?php echo h($picture) ?>" width="48" height="48" alt=""/>
-            <?php endif; ?>
-            <p><?php echo h($message); ?><span class="name">（<?php echo h($name); ?>）</span></p>
-            <p class="day"><a href="view.php?id="><?php echo h($created); ?></a>
-                [<a href="delete.php?id=<?php echo h($id);?>" style="color: #F33;">削除</a>]
-            </p>
+            <div class="msg">
+                <?php if ($picture): ?>
+                <img src="member_picture/<?php echo h($picture) ?>" width="48" height="48" alt=""/>
+                <?php endif; ?>
+                <p><?php echo h($message); ?><span class="name">（<?php echo h($name); ?>）</span></p>
+                <p class="day"><a href="view.php?id=<?php echo h($id);?>"><?php echo h($created); ?></a>
+                    [<a href="delete.php?id=" style="color: #F33;">削除</a>]
+                </p>
         </div>
         <?php endwhile; ?>
     </div>
